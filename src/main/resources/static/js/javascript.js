@@ -42,7 +42,7 @@ $().ready(function() {
             contentType: false,
             processData: false,
             success: function(data) {
-                alert("성공적으로 상품이 등록되었습니다.");
+                alert("상품이 성공적으로 등록되었습니다.");
                 // console.log(data);
                 // alert(JSON.stringify(data));
                 location.href = window.location.protocol + "//" + host;
@@ -72,6 +72,46 @@ $().ready(function() {
         if(imageFileName.length == 0) {
             alert("Please enter your product image.");
             return false;
+        }
+    });
+
+    // 메인 화면에 상품 목록 카드 형식으로 보여주기
+    $.ajax({
+        url: '/readAll',
+        method: 'GET',
+        success: function(products) {
+            // alert("상품 불러오기에 성공했습니다.");
+            for (let i = 0; i < products.data.length; i++) {
+                const product = products.data[i];
+                // console.log(product.productName);
+                // console.log(product.productPrice);
+                // console.log(product.imageFileUrl);
+                const productCardHTML = `<div class="col mb-5">
+                                        <div class="card h-100">
+                                            <!-- Product image-->
+                                            <img class="card-img-top" src="${product.imageFileUrl}" alt="..." />
+                                            <!-- Product details-->
+                                            <div class="card-body p-4">
+                                                <div class="text-center">
+                                                    <!-- Product name-->
+                                                    <h5 class="fw-bolder">${product.productName}</h5>
+                                                    <!-- Product price-->
+                                                    ₩${product.productPrice}
+                                                </div>
+                                            </div>
+                                            <!-- Product actions-->
+                                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                $('#product-list').append(productCardHTML);
+            }
+        },
+        error: function(e) {
+            // console.log(e);
+            alert("상품 불러오기에 실패했습니다.");
+            location.href = window.location.protocol + "//" + host;
         }
     });
 });
