@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 import store.lkhun.demo.dto.ProductRequestDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Product extends Timestamped {
+public class Product extends Timestamped implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
