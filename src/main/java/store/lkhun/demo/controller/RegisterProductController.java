@@ -14,6 +14,7 @@ import store.lkhun.demo.global.CacheKey;
 import javax.validation.Valid;
 import java.io.IOException;
 
+@CrossOrigin("*")
 @RestController
 @RequiredArgsConstructor
 public class RegisterProductController {
@@ -21,31 +22,52 @@ public class RegisterProductController {
 
     @CachePut(value = CacheKey.PRODUCT)
     @GetMapping("/readAll")
-    public ResponseDto<?> readProducts() {
-        return productService.readProducts();
+    public ResponseDto<?> readProducts() { return productService.readProducts(); }
+
+    @CachePut(value = CacheKey.PRODUCT, key = "#requestDto.productName", unless = "#result == null")
+    @PostMapping(value = "/uploadDev", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseDto<?> createDevProduct(@Valid @RequestPart(value = "requestDto") ProductRequestDto requestDto,
+                                           @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
+        System.out.println(imageFile);
+        //org.springframework.web.multipart.support.StandardMultipartHttpServletRequest$StandardMultipartFile@681db269
+        System.out.println(imageFile.getOriginalFilename());
+        //aws.png
+        return productService.createDevProduct(requestDto, imageFile);
     }
 
     @CachePut(value = CacheKey.PRODUCT, key = "#requestDto.productName", unless = "#result == null")
-    @PostMapping(value = "/upload", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseDto<?> createProduct(@Valid @RequestPart(value = "requestDto") ProductRequestDto requestDto,
+    @PostMapping(value = "/uploadProd", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseDto<?> createProdProduct(@Valid @RequestPart(value = "requestDto") ProductRequestDto requestDto,
                                          @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
         System.out.println(imageFile);
         //org.springframework.web.multipart.support.StandardMultipartHttpServletRequest$StandardMultipartFile@681db269
         System.out.println(imageFile.getOriginalFilename());
         //aws.png
-        return productService.createProduct(requestDto, imageFile);
+        return productService.createProdProduct(requestDto, imageFile);
     }
 
     @CachePut(value = CacheKey.PRODUCT, key = "#productName", unless = "#result == null")
-    @PutMapping(value = "/update/{productName}")
-    public ResponseDto<?> updatePosts(@PathVariable(name = "productName") String productName,
+    @PutMapping(value = "/updateDev/{productName}")
+    public ResponseDto<?> updateDevProduct(@PathVariable(name = "productName") String productName,
                                       @Valid @RequestPart(value = "requestDto") ProductRequestDto productRequestDto,
                                       @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws IOException{
         System.out.println(imageFile);
         //org.springframework.web.multipart.support.StandardMultipartHttpServletRequest$StandardMultipartFile@681db269
         System.out.println(imageFile.getOriginalFilename());
         //aws.png
-        return productService.updateProduct(productName, productRequestDto, imageFile);
+        return productService.updateDevProduct(productName, productRequestDto, imageFile);
+    }
+
+    @CachePut(value = CacheKey.PRODUCT, key = "#productName", unless = "#result == null")
+    @PutMapping(value = "/updateProd/{productName}")
+    public ResponseDto<?> updateProdProduct(@PathVariable(name = "productName") String productName,
+                                      @Valid @RequestPart(value = "requestDto") ProductRequestDto productRequestDto,
+                                      @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws IOException{
+        System.out.println(imageFile);
+        //org.springframework.web.multipart.support.StandardMultipartHttpServletRequest$StandardMultipartFile@681db269
+        System.out.println(imageFile.getOriginalFilename());
+        //aws.png
+        return productService.updateProdProduct(productName, productRequestDto, imageFile);
     }
 
     @CacheEvict(value = CacheKey.PRODUCT, key = "#productName")

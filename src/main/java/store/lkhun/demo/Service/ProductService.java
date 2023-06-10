@@ -28,9 +28,45 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseDto<?> createProduct(ProductRequestDto productRequestDto, MultipartFile imageFile) throws IOException {
+    public ResponseDto<?> createDevProduct(ProductRequestDto productRequestDto, MultipartFile imageFile) throws IOException {
 
         String defaultImageUrl = "https://st-plumm-dev.s3.ap-northeast-2.amazonaws.com/img/base_image.jpg";
+        String imageFileUrl = "";
+        String dirName = "img/product/" + productRequestDto.getProductName();
+
+        s3UploadService.removeImageFolderInS3("img/product/" + productRequestDto.getProductName());
+        productRepository.deleteByProductName(productRequestDto.getProductName());
+
+        if (imageFile == null) {
+            Product product = productRepository.save(Product.builder()
+                    .requestDto(productRequestDto)
+                    .imageFileUrl(defaultImageUrl)
+                    .build());
+
+            return ResponseDto.success(ProductResponseDto.builder()
+                    .product(product)
+                    .imageFileUrl(defaultImageUrl)
+                    .build());
+        }
+
+        s3UploadService.s3UploadFile(imageFile, dirName);
+        imageFileUrl = "https://st-plumm-dev.s3.ap-northeast-2.amazonaws.com/" + dirName + "/" + imageFile.getOriginalFilename();
+
+        Product product = productRepository.save(Product.builder()
+                .requestDto(productRequestDto)
+                .imageFileUrl(imageFileUrl)
+                .build());
+
+        return ResponseDto.success(ProductResponseDto.builder()
+                .product(product)
+                .imageFileUrl(imageFileUrl)
+                .build());
+    }
+
+    @Transactional
+    public ResponseDto<?> createProdProduct(ProductRequestDto productRequestDto, MultipartFile imageFile) throws IOException {
+
+        String defaultImageUrl = "https://st-plumm-prod.s3.ap-northeast-2.amazonaws.com/img/base_image.jpg";
         String imageFileUrl = "";
         String dirName = "img/product/" + productRequestDto.getProductName();
 
@@ -64,9 +100,48 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseDto<?> updateProduct(String productName, ProductRequestDto productRequestDto, MultipartFile imageFile) throws IOException {
+    public ResponseDto<?> updateDevProduct(String productName, ProductRequestDto productRequestDto, MultipartFile imageFile) throws IOException {
 
         String defaultImageUrl = "https://st-plumm-dev.s3.ap-northeast-2.amazonaws.com/img/base_image.jpg";
+        String imageFileUrl = "";
+        String dirName = "img/product/" + productRequestDto.getProductName();
+
+        s3UploadService.removeImageFolderInS3("img/product/" + productRequestDto.getProductName());
+        productRepository.deleteByProductName(productRequestDto.getProductName());
+
+        if (imageFile == null) {
+            productRepository.deleteByProductName(productRequestDto.getProductName());
+            s3UploadService.removeImageFolderInS3("img/product/" + productRequestDto.getProductName());
+
+            Product product = productRepository.save(Product.builder()
+                    .requestDto(productRequestDto)
+                    .imageFileUrl(defaultImageUrl)
+                    .build());
+
+            return ResponseDto.success(ProductResponseDto.builder()
+                    .product(product)
+                    .imageFileUrl(defaultImageUrl)
+                    .build());
+        }
+
+        s3UploadService.s3UploadFile(imageFile, dirName);
+        imageFileUrl = "https://st-plumm-dev.s3.ap-northeast-2.amazonaws.com/" + dirName + "/" + imageFile.getOriginalFilename();
+
+        Product product = productRepository.save(Product.builder()
+                .requestDto(productRequestDto)
+                .imageFileUrl(imageFileUrl)
+                .build());
+
+        return ResponseDto.success(ProductResponseDto.builder()
+                .product(product)
+                .imageFileUrl(imageFileUrl)
+                .build());
+    }
+
+    @Transactional
+    public ResponseDto<?> updateProdProduct(String productName, ProductRequestDto productRequestDto, MultipartFile imageFile) throws IOException {
+
+        String defaultImageUrl = "https://st-plumm-prod.s3.ap-northeast-2.amazonaws.com/img/base_image.jpg";
         String imageFileUrl = "";
         String dirName = "img/product/" + productRequestDto.getProductName();
 

@@ -1,8 +1,18 @@
 const host = window.location.host;
-let file = null;
+let serverUrl = undefined;
+let file = undefined;
 
 function goToRegister() {
-    location.href = window.location.protocol + "//" + host + "/register";
+    if (host == "albdev.lkhun.store") {
+        location.href = window.location.protocol + "//" + host + "/register";
+    } else if (host == "alb.lkhun.store") {
+        location.href = window.location.protocol + "//" + host + "/register";
+    } else if (host == "localhost:8080") {
+        location.href = window.location.protocol + "//" + host + "/register";
+    } else {
+        location.href = "https://lkhun.store/registerProduct.html";
+    }
+    // location.href = window.location.protocol + "//" + host + "/register";
 };
 
 function goToMain() {
@@ -34,9 +44,21 @@ $().ready(function() {
         // // console.log(formData);
         // for (const pair of formData.entries()) { console.log('{"' + pair[0] + '"' + ': ' + '' + pair[1] + '}'); }
 
+        if (host == "albdev.lkhun.store") {
+            serverUrl = "/uploadDev";
+        } else if (host == "alb.lkhun.store") {
+            serverUrl = "/uploadProd";
+        } else if (host == "localhost:8080") {
+            serverUrl = "https://albdev.lkhun.store/uploadDev";
+        }
+        else {
+            serverUrl = "https://alb.lkhun.store/uploadProd";
+        }
+        console.log(serverUrl);
+
         // 데이터를 서버로 전송
         $.ajax({
-            url: '/upload',
+            url: serverUrl,
             type: 'POST',
             data: formData,
             contentType: false,
@@ -75,9 +97,23 @@ $().ready(function() {
         }
     });
 
+    if (host == "albdev.lkhun.store") {
+        serverUrl = "/readAll";
+    } else if (host == "alb.lkhun.store") {
+        serverUrl = "/readAll";
+    } else if (host == "localhost:8080") {
+        serverUrl = "https://albdev.lkhun.store/readAll";
+    }
+    else {
+        serverUrl = "https://alb.lkhun.store/readAll";
+    }
+    console.log(serverUrl);
+
     // 메인 화면에 상품 목록 카드 형식으로 보여주기
-    $.ajax({
-        url: '/readAll',
+    $.ajax(
+        {
+        // url: 'https://alb.lkhun.store/readAll',
+        url: serverUrl,
         method: 'GET',
         success: function(products) {
             // alert("상품 불러오기에 성공했습니다.");

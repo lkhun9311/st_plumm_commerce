@@ -12,7 +12,7 @@ public class PageController {
     }
 
     @GetMapping("/register")
-    public String registerProductPage() {
+    public String registerPage() {
         return "registerProduct.html";
     }
 }
