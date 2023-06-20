@@ -38,12 +38,4 @@ jobs:
           args: s3 sync ./src/main/resources/templates s3://${{ secrets.S3_BUCKET_NAME }}
 
       - name: CloudFront 캐시 무효화
-        uses: chetan/invalidate-cloudfront-action@v1
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-        with:
-          distribution: ${{ secrets.CDN_DISTRIBUTION_ID }}
-          paths: '/*'
-        continue-on-error: true
+        run: aws cloudfront create-invalidation --distribution-id ${{secrets.DEV_DISTRIBUTION_ID}} --paths "/*"
