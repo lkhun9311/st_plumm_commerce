@@ -14,10 +14,10 @@ jobs:
       - name: 코드 체크아웃
         uses: actions/checkout@v2
 
-      - name: gradlew에 대한 실행 권한 부여
+      - name: gradlew 파일에 실행 권한 부여
         run: chmod +x gradlew
 
-      - name: 빌드 및 테스트
+      - name: 프로젝트를 빌드/테스트
         continue-on-error: true
         run: ./gradlew build
 
@@ -28,10 +28,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: S3에 파일 업로드 - 1
+      - name: 정적 리소스를 S3 버킷으로 업로드
         run: aws s3 sync ./src/main/resources/static s3://${{ secrets.S3_BUCKET_NAME }}
 
-      - name: S3에 파일 업로드 - 2
+      - name: 템플릿 파일을 S3 버킷으로 업로드
         run: aws s3 sync ./src/main/resources/templates s3://${{ secrets.S3_BUCKET_NAME }}
 
       - name: CloudFront 캐시 무효화
