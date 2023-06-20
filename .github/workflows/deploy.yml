@@ -26,10 +26,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          run: |
-            pwd
-            ls
-#            s3 sync ./ ${{ secrets.S3_BUCKET_NAME }} --delete --exclude "*" --include "*.html" --include "*.css" --include "*.js"
+          run: s3 sync ./workdir ${{ secrets.S3_BUCKET_NAME }} --delete --exclude "*" --include "*.html" --include "*.css" --include "*.js"
 
       - name: CloudFront 캐시 무효화
         uses: chetan/invalidate-cloudfront-action@v1
