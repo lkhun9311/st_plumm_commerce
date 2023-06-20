@@ -17,12 +17,13 @@ jobs:
       - name: 빌드 및 테스트
         run: ./gradlew build
 
-      - name: S3 버킷에 이진 파일 업로드
-        uses: actions/aws/cli@master
+      - name: Upload File from S3
+        uses: docker://amazon/aws-cli:2.0.7
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
-          cli-command: s3 sync
-          cli-subcommand: .
-          cli-arguments: ${{ secrets.S3_BUCKET_NAME }} --acl public-read --delete --exclude "*" --include "*.html" --include "*.css" --include "*.js"
+          args: s3 sync ${{ secrets.S3_BUCKET_NAME }} --delete --exclude "*" --include "*.html" --include "*.css" --include "*.js"
 
       - name: CloudFront 캐시 무효화
         uses: chetan/invalidate-cloudfront-action@v1
