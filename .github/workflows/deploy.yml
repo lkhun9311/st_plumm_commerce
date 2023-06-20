@@ -38,4 +38,4 @@ jobs:
           args: s3 sync ./src/main/resources/templates s3://${{ secrets.S3_BUCKET_NAME }}
 
       - name: CloudFront 캐시 무효화
-        run: aws cloudfront create-invalidation --distribution-id ${{secrets.DEV_DISTRIBUTION_ID}} --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{secrets.CDN_DISTRIBUTION_ID}} --paths "/*"
