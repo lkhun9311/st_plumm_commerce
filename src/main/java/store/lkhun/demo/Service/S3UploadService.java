@@ -51,7 +51,8 @@ public class S3UploadService {
 
     private String putS3(File uploadFile, String fileName) {
         try {
-            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+//            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile));
         } catch (Exception e) {
             log.error("AWS S3에 이미지 업로드 실패했습니다.");
             log.error(e.getMessage());
