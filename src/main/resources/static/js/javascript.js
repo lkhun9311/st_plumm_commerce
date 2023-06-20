@@ -49,7 +49,7 @@ $().ready(function() {
         } else if (host == "alb.lkhun.store") {
             serverUrl = "/uploadProd";
         } else if (host == "localhost:8080") {
-            serverUrl = "https://albdev.lkhun.store/uploadDev";
+            serverUrl = "http://localhost:8080/uploadProd";
         }
         else {
             serverUrl = "https://alb.lkhun.store/uploadProd";
@@ -98,16 +98,16 @@ $().ready(function() {
     });
 
     if (host == "albdev.lkhun.store") {
-        serverUrl = "/readAll";
+        serverUrl = "/readAllDev";
     } else if (host == "alb.lkhun.store") {
-        serverUrl = "/readAll";
+        serverUrl = "/readAllProd";
     } else if (host == "localhost:8080") {
-        serverUrl = "https://albdev.lkhun.store/readAll";
+        serverUrl = "http://localhost:8080/readAllDev";
     }
     else {
-        serverUrl = "https://alb.lkhun.store/readAll";
+        serverUrl = "https://alb.lkhun.store/readAllProd";
     }
-    console.log(serverUrl);
+    // console.log(serverUrl);
 
     // 메인 화면에 상품 목록 카드 형식으로 보여주기
     $.ajax(
