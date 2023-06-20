@@ -29,7 +29,7 @@ jobs:
           run: |
             pwd
             ls
-            s3 sync ./ ${{ secrets.S3_BUCKET_NAME }} --delete --exclude "*" --include "*.html" --include "*.css" --include "*.js"
+#            s3 sync ./ ${{ secrets.S3_BUCKET_NAME }} --delete --exclude "*" --include "*.html" --include "*.css" --include "*.js"
 
       - name: CloudFront 캐시 무효화
         uses: chetan/invalidate-cloudfront-action@v1
