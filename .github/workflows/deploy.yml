@@ -40,6 +40,8 @@ jobs:
       - name: CloudFront 캐시 무효화
         uses: chetan/invalidate-cloudfront-action@v1
         with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           distribution: ${{ secrets.CDN_DISTRIBUTION_ID }}
           paths: '/*'
         continue-on-error: true
