@@ -1,8 +1,7 @@
 name: deploy
 on:
   push:
-    branches:
-      - main
+    branches: [ main, dev ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,6 +20,10 @@ jobs:
         continue-on-error: true
         run: ./gradlew build
 
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip .
+        shell: bash
+
       - name: AWS 자격 증명 구성
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -36,3 +39,6 @@ jobs:
 
       - name: CloudFront 캐시 무효화
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CDN_DISTRIBUTION_ID }} --paths "/*"
+
+      - name: jar 파일을 S3 버킷으로 업로드
+        run: aws s3 cp --${{ secrets.AWS_REGION }} ./build/libs s3://${{ secrets.S3_BUCKET_NAME }}/build
