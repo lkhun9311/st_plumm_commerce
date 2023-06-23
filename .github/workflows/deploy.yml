@@ -47,7 +47,7 @@ jobs:
 #      - name: 애플리케이션 JAR 파일 압축
 #        run: zip -r ./ ./build/libs/demo-0.0.1-SNAPSHOT.jar
       - name: zip으로 압축
-        run: zip -r ./demo.zip
+        run: zip -r ./demo.zip .
         shell: bash
 
       - name: 압축 파일을 S3 버킷으로 업로드
