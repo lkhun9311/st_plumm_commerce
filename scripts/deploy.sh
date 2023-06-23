@@ -20,7 +20,12 @@ else
   sleep 5
 fi
 
+PROFILE=$(ls /home/ec2-user/action/src/main/resources/application.yml)
+YML_NAME=$(basename $PROFILE)
+echo ">>> yml 파일명: $YML_NAME" >> /home/ec2-user/action/deploy.log
+
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "$DEPLOY_JAR" >> /home/ec2-user/action/deploy.log
 echo ">>> DEPLOY_JAR 배포" >> /home/ec2-user/action/deploy.log
-nohup java --spring.config.location=/home/ec2-user/action/src/main/resources/application.yml --spring.profiles.active=prod -jar $DEPLOY_JAR >> /home/ec2-user/deploy.log 2>/home/ec2-user/action/deploy_err.log &
+
+nohup java --spring.config.location=$YML_NAME --spring.profiles.active=default -jar $DEPLOY_JAR >> /home/ec2-user/deploy.log 2>/home/ec2-user/action/deploy_err.log &

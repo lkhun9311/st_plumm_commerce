@@ -26,7 +26,7 @@ jobs:
 
       - name: 프로젝트를 빌드/테스트
         continue-on-error: true
-        run: ./gradlew build
+        run: ./gradlew clean build
 
       - name: AWS 자격 증명 구성
         uses: aws-actions/configure-aws-credentials@v1
