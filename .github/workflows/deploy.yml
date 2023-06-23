@@ -17,13 +17,13 @@ jobs:
           java-version: 11
           distribution: 'zulu'
       # github action에 secret으로 application.yml을 올려두고 활용
-      - run: mkdir ./module-api/src/main/resources
-      - run: touch ./module-api/src/main/resources/application.yml
-      - run: echo "${{ secrets.APPLICATION_DEV }}" > ./module-api/src/main/resources/application.yml
-      - run: cat ./module-api/src/main/resources/application.yml
+      - run: mkdir ./src/main/resources
+      - run: touch ./src/main/resources/application.yml
+      - run: echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application.yml
+      - run: cat ./src/main/resources/application.yml
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ./module-api/gradlew
+        run: chmod +x ./gradlew
         shell: bash
       - name: 코드 체크아웃
         uses: actions/checkout@v2
