@@ -6,7 +6,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      CONTEXT: dev
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -16,17 +15,11 @@ jobs:
         with:
           java-version: 11
           distribution: 'zulu'
-      # github action에 secret으로 application.yml을 올려두고 활용
-      - run: mkdir ./src/main/resources
+      - name: 코드 체크아웃
+        uses: actions/checkout@v2
       - run: touch ./src/main/resources/application.yml
       - run: echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application.yml
       - run: cat ./src/main/resources/application.yml
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-        shell: bash
-      - name: 코드 체크아웃
-        uses: actions/checkout@v2
 
       - name: gradlew 파일에 실행 권한 부여
         run: chmod +x gradlew
@@ -51,19 +44,19 @@ jobs:
       - name: CloudFront 캐시 무효화
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CDN_DISTRIBUTION_ID }} --paths "/*"
 
-#      - name: zip으로 압축
-#        run: zip -r ./demo.zip .
-#        shell: bash
+      #      - name: zip으로 압축
+      #        run: zip -r ./demo.zip .
+      #        shell: bash
 
       - name: zip으로 압축
         run: |
           zip -r ./demo.zip .
           aws s3 cp demo.zip s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
 
-#      - name: jar 파일을 zip으로 압축하고 S3 버킷으로 업로드
-#        run: |
-#          zip demo.zip ./build/libs/demo-0.0.1-SNAPSHOT.jar
-#          aws s3 cp demo.zip s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
+      #      - name: jar 파일을 zip으로 압축하고 S3 버킷으로 업로드
+      #        run: |
+      #          zip demo.zip ./build/libs/demo-0.0.1-SNAPSHOT.jar
+      #          aws s3 cp demo.zip s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
 
       - name: CodeDeploy 실행
         run: aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP }} --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=build/demo.zip
