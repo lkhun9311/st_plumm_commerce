@@ -48,7 +48,7 @@ jobs:
       - name: zip으로 압축
         run: |
           zip -r ./demo.zip .
-          aws s3 sync demo.zip s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
+          aws s3 cp demo.zip s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
 
 #      - name: jar 파일을 zip으로 압축하고 S3 버킷으로 업로드
 #        run: |
