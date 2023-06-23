@@ -10,6 +10,11 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: 'zulu'
       - name: 코드 체크아웃
         uses: actions/checkout@v2
 
@@ -38,3 +43,6 @@ jobs:
 
       - name: jar 파일을 S3 버킷으로 업로드
         run: aws s3 cp ./build/libs/demo-0.0.1-SNAPSHOT.jar s3://${{ secrets.S3_BUCKET_NAME }}/build/demo-0.0.1-SNAPSHOT.jar
+
+      - name: CodeDeploy 실행
+        run: aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP }} --s3-location bucket=${{ secrets.S3_BUCKET_NAME }}, bundleType=jar, key=demo-0.0.1-SNAPSHOT.jar
