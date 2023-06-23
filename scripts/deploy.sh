@@ -26,4 +26,4 @@ DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "$DEPLOY_JAR" >> /home/ec2-user/action/deploy.log
 echo ">>> DEPLOY_JAR 배포" >> /home/ec2-user/action/deploy.log
 
-nohup java -jar $DEPLOY_JAR --spring.config.name=${YML_NAME} --spring.config.location=/home/ec2-user/action/src/main/resources/ >> /home/ec2-user/action/deploy.log 2>/home/ec2-user/action/deploy_err.log &
+nohup java -jar $DEPLOY_JAR --spring.config.name=${ YML_NAME } --spring.config.location=/home/ec2-user/action/src/main/resources/ >> /home/ec2-user/action/deploy.log 2>/home/ec2-user/action/deploy_err.log &
