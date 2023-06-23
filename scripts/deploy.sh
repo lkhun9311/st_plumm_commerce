@@ -20,11 +20,14 @@ else
   sleep 5
 fi
 
-#YML_FILE=$(ls /home/ec2-user/action/src/main/resources/application-dev.yml)
-#YML_NAME=$(basename $YML_FILE)
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "$DEPLOY_JAR" >> /home/ec2-user/action/deploy.log
 echo ">>> DEPLOY_JAR 배포" >> /home/ec2-user/action/deploy.log
 
-#nohup java -jar $DEPLOY_JAR --spring.config.name=${ YML_NAME } --spring.config.location=/home/ec2-user/action/src/main/resources/ >> /home/ec2-user/action/deploy.log 2>/home/ec2-user/action/deploy_err.log &
-nohup java -Dspring.profiles.active=dev -jar demo-0.0.1-SNAPSHOT.jar >> /home/ec2-user/action/deploy.log 2>/home/ec2-user/action/deploy_err.log &
+# 로그 파일 생성 및 실행 로그 저장
+LOG_FILE=/home/ec2-user/application.log
+touch $LOG_FILE
+nohup java -Dspring.profiles.active=dev -jar $DEPLOY_JAR >> $LOG_FILE 2>&1 &
+
+# 로그 파일 위치 출력
+echo ">>> 로그 파일 위치: $LOG_FILE" >> /home/ec2-user/action/deploy.log
