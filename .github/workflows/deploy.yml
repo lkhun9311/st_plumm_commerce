@@ -44,11 +44,16 @@ jobs:
       - name: CloudFront 캐시 무효화
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CDN_DISTRIBUTION_ID }} --paths "/*"
 
-      - name: 애플리케이션 JAR 파일 압축
-        run: zip -r ./ ./build/libs/demo-0.0.1-SNAPSHOT.jar
+#      - name: 애플리케이션 JAR 파일 압축
+#        run: zip -r ./ ./build/libs/demo-0.0.1-SNAPSHOT.jar
+#
+#      - name: 압축 파일을 S3 버킷으로 업로드
+#        run: aws s3 cp ./ s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
 
-      - name: 압축 파일을 S3 버킷으로 업로드
-        run: aws s3 cp ./ s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
+      - name: jar 파일을 zip으로 압축하고 S3 버킷으로 업로드
+        run: |
+          zip demo.zip ./build/libs/demo-0.0.1-SNAPSHOT.jar
+          aws s3 cp demo.zip s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
 
       - name: CodeDeploy 실행
         run: |
