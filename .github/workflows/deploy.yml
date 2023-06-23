@@ -23,10 +23,12 @@ jobs:
 
       - name: gradlew 파일에 실행 권한 부여
         run: chmod +x gradlew
+        shell: bash
 
       - name: 프로젝트를 빌드/테스트
         continue-on-error: true
         run: ./gradlew clean build
+        shell: bash
 
       - name: AWS 자격 증명 구성
         uses: aws-actions/configure-aws-credentials@v1
@@ -61,10 +63,6 @@ jobs:
 #          zip demo.zip ./build/libs/demo-0.0.1-SNAPSHOT.jar
 #          aws s3 cp demo.zip s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
 
-      - name: CodeDeploy 실행
-        run: |
-          aws deploy create-deployment \
-            --application-name ${{ secrets.CODEDEPLOY_NAME }} \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP }} \
-            --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=build/demo.zip
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP }} --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=build/demo.zip
+
