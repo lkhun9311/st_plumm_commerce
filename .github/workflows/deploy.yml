@@ -18,8 +18,19 @@ jobs:
       - name: 코드 체크아웃
         uses: actions/checkout@v2
 
-      - name: application.yml 파일 생성
-        run: echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application-dev.yml
+#      - name: application.yml 파일 생성
+#        run: echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application-dev.yml
+      - name: application-dev.yml 파일 생성
+        run: |
+          touch ./src/main/resources/application.properties
+          echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application-dev.yml
+          cat ./src/main/resources/application-dev.yml
+
+      - name: application-prod.yml 파일 생성
+        run: |
+          touch ./src/main/resources/application.properties
+          echo "${{ secrets.APPLICATION_PROD }}" > ./src/main/resources/application-prod.yml
+          cat ./src/main/resources/application-prod.yml
 
       - name: gradlew 파일에 실행 권한 부여
         run: chmod +x gradlew
