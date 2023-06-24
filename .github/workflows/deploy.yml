@@ -41,11 +41,15 @@ jobs:
         run: aws s3 sync ./src/main/resources/static s3://${{ secrets.AWS_S3_BUCKET_NAME_DEV }}
 #        AWS_S3_BUCKET_NAME_PROD
 
+      - name: 템플릿 파일을 S3 버킷으로 업로드
+        run: aws s3 sync ./src/main/resources/templates s3://${{ secrets.AWS_S3_BUCKET_NAME_DEV }}
+#        AWS_S3_BUCKET_NAME_PROD
+
 #      - name: 템플릿 파일을 S3 버킷으로 업로드
 #        run: aws s3 sync ./src/main/resources/templates s3://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}
 
-      - name: CloudFront 캐시 무효화
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CDN_DISTRIBUTION_ID }} --paths "/*"
+#      - name: CloudFront 캐시 무효화
+#        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CDN_DISTRIBUTION_ID }} --paths "/*"
 
 #      - name: 애플리케이션 JAR 파일 압축
 #        run: zip -r ./ ./build/libs/demo-0.0.1-SNAPSHOT.jar

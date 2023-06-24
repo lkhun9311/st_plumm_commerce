@@ -20,11 +20,11 @@ import java.io.IOException;
 public class RegisterProductDevController {
     private final ProductDevService productDevService;
 
-//    @CachePut(value = CacheKey.PRODUCT)
+    @CachePut(value = CacheKey.PRODUCT)
     @GetMapping("/readAllDev")
     public ResponseDto<?> readDevProducts() { return productDevService.readDevProducts(); }
 
-//    @CachePut(value = CacheKey.PRODUCT, key = "#requestDto.productName", unless = "#result == null")
+    @CachePut(value = CacheKey.PRODUCT, key = "#requestDto.productName", unless = "#result == null")
     @PostMapping(value = "/uploadDev", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<?> createDevProduct(@Valid @RequestPart(value = "requestDto") ProductRequestDto requestDto,
                                            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
@@ -35,7 +35,7 @@ public class RegisterProductDevController {
         return productDevService.createDevProduct(requestDto, imageFile);
     }
 
-//    @CachePut(value = CacheKey.PRODUCT, key = "#productName", unless = "#result == null")
+    @CachePut(value = CacheKey.PRODUCT, key = "#productName", unless = "#result == null")
     @PutMapping(value = "/updateDev/{productName}")
     public ResponseDto<?> updateDevProduct(@PathVariable(name = "productName") String productName,
                                       @Valid @RequestPart(value = "requestDto") ProductRequestDto productRequestDto,
@@ -47,7 +47,7 @@ public class RegisterProductDevController {
         return productDevService.updateDevProduct(productName, productRequestDto, imageFile);
     }
 
-//    @CacheEvict(value = CacheKey.PRODUCT, key = "#productName")
+    @CacheEvict(value = CacheKey.PRODUCT, key = "#productName")
     @DeleteMapping("/deleteDev/{productName}")
     public ResponseDto<?> deleteDevProduct(@PathVariable (name = "productName") String productName) {
         return productDevService.deleteDevProduct(productName);

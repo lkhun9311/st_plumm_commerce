@@ -20,11 +20,11 @@ import java.io.IOException;
 public class RegisterProductProdController {
     private final ProductProdService productProdService;
 
-//    @CachePut(value = CacheKey.PRODUCT)
+    @CachePut(value = CacheKey.PRODUCT)
     @GetMapping("/readAllProd")
     public ResponseDto<?> readProdProducts() { return productProdService.readProdProducts(); }
 
-//    @CachePut(value = CacheKey.PRODUCT, key = "#requestDto.productName", unless = "#result == null")
+    @CachePut(value = CacheKey.PRODUCT, key = "#requestDto.productName", unless = "#result == null")
     @PostMapping(value = "/uploadProd", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<?> createProdProduct(@Valid @RequestPart(value = "requestDto") ProductRequestDto requestDto,
                                          @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
@@ -35,7 +35,7 @@ public class RegisterProductProdController {
         return productProdService.createProdProduct(requestDto, imageFile);
     }
 
-//    @CachePut(value = CacheKey.PRODUCT, key = "#productName", unless = "#result == null")
+    @CachePut(value = CacheKey.PRODUCT, key = "#productName", unless = "#result == null")
     @PutMapping(value = "/updateProd/{productName}")
     public ResponseDto<?> updateProdProduct(@PathVariable(name = "productName") String productName,
                                       @Valid @RequestPart(value = "requestDto") ProductRequestDto productRequestDto,
@@ -47,7 +47,7 @@ public class RegisterProductProdController {
         return productProdService.updateProdProduct(productName, productRequestDto, imageFile);
     }
 
-//    @CacheEvict(value = CacheKey.PRODUCT, key = "#productName")
+    @CacheEvict(value = CacheKey.PRODUCT, key = "#productName")
     @DeleteMapping("/deleteProd/{productName}")
     public ResponseDto<?> deleteProdProduct(@PathVariable (name = "productName") String productName) {
         return productProdService.deleteProdProduct(productName);
