@@ -22,7 +22,7 @@ echo ">>> DEPLOY_JAR 배포" >> /home/ec2-user/action/deploy.log
 # 로그 파일 생성 및 실행 로그 저장
 LOG_FILE=./application.log
 touch $LOG_FILE
-nohup java -Dspring.profiles.active=dev -jar $BUILD_JAR >> $LOG_FILE 2>&1 &
+nohup java -Dspring.profiles.active=prod -jar $BUILD_JAR >> $LOG_FILE 2>&1 &
 
 # 로그 파일 위치 출력
 echo ">>> 로그 파일 위치: $LOG_FILE" >> /home/ec2-user/action/deploy.log
