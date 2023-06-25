@@ -69,7 +69,7 @@ jobs:
         shell: bash
 
       - name: 압축 파일을 S3 버킷으로 업로드
-        run: aws s3 cp ./demo.zip s3://${{ secrets.AWS_S3_BUCKET_NAME_DEV }}/build/demo.zip
+        run: aws s3 cp ./demo.zip s3://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}/build/demo.zip
 #
 #      - name: 압축 파일을 S3 버킷으로 업로드
 #        run: aws s3 cp ./ s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
