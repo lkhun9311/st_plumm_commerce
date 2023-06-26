@@ -5,5 +5,5 @@ if [ -z "$PID" ]; then
     echo "demo-0.0.1-SNAPSHOT.jar가 실행되고 있지 않습니다."
 else
     echo "demo-0.0.1-SNAPSHOT.jar가 실행 중인 PID: $PID. 이 프로세스를 종료합니다."
-    kill -9 $PID
+    sudo kill -9 $PID
 fi
