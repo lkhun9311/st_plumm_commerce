@@ -25,8 +25,10 @@ jobs:
       - name: appspec.yml 파일 생성
         run: |
           if [ "${BRANCH_NAME}" = "main" ]; then
+            touch ./appspec.yml
             echo "${{ secrets.APPSPEC_PROD }}" > ./appspec.yml
           else
+            touch ./appspec.yml
             echo "${{ secrets.APPSPEC_DEV }}" > ./appspec.yml
           fi
 
@@ -44,7 +46,7 @@ jobs:
         run: chmod +x gradlew
         shell: bash
 
-      - name: 프로젝트 빌드/테스트
+      - name: 프로젝트 빌드 / 테스트
         continue-on-error: true
         run: ./gradlew clean build
         shell: bash
