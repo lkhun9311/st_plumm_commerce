@@ -19,7 +19,7 @@ jobs:
       - name: 코드 체크아웃
         uses: actions/checkout@v2
 
-      - name: 브랜치 이름 설정
+      - name: 현재 브랜치 이름 설정
         run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
 
       - name: appspec.yml 파일 생성
@@ -44,7 +44,7 @@ jobs:
         run: chmod +x gradlew
         shell: bash
 
-      - name: 프로젝트를 빌드/테스트
+      - name: 프로젝트 빌드/테스트
         continue-on-error: true
         run: ./gradlew clean build
         shell: bash
@@ -87,7 +87,7 @@ jobs:
             aws s3 cp ./demo.zip s3://${{ secrets.AWS_S3_BUCKET_NAME_DEV }}/build/demo.zip
           fi
 
-      - name: Code Deploy
+      - name: CodeDeploy 실행
         run: |
           if [ "${BRANCH_NAME}" = "main" ]; then
             aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_NAME_PROD }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP_PROD }} --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME_PROD }},bundleType=zip,key=build/demo.zip --region ${{ secrets.AWS_REGION }}
