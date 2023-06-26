@@ -24,6 +24,7 @@ public class ProductDevService {
 
     public ResponseDto<?> readDevProducts() {
         List<Product> product = productRepository.findAll();
+        log.info("readDevProducts 실행");
 //        return ResponseDto.success(product);
         return ResponseDto.success(null);
     }
