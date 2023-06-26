@@ -48,7 +48,7 @@ jobs:
         run: chmod +x gradlew
         shell: bash
 
-      - name: 프로젝트 빌드/테스트
+      - name: 프로젝트 빌드 / 테스트
         continue-on-error: true
         run: ./gradlew clean build
         shell: bash
