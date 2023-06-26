@@ -1,7 +1,7 @@
 name: deploy
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,22 +15,30 @@ jobs:
         with:
           java-version: 11.0.19
           distribution: 'adopt'
+
       - name: 코드 체크아웃
         uses: actions/checkout@v2
 
-#      - name: application.yml 파일 생성
-#        run: echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application-dev.yml
-      - name: application-dev.yml 파일 생성
-        run: |
-          touch ./src/main/resources/application-dev.yml
-          echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application-dev.yml
-#          cat ./src/main/resources/application-dev.yml
+      - name: 브랜치 이름 설정
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
 
-      - name: application-prod.yml 파일 생성
+      - name: appspec.yml 파일 생성
         run: |
-          touch ./src/main/resources/application-prod.yml
-          echo "${{ secrets.APPLICATION_PROD }}" > ./src/main/resources/application-prod.yml
-#          cat ./src/main/resources/application-prod.yml
+          if [ "${BRANCH_NAME}" = "main" ]; then
+            echo "${{ secrets.APPSPEC_PROD }}" > ./appspec.yml
+          else
+            echo "${{ secrets.APPSPEC_DEV }}" > ./appspec.yml
+          fi
+
+      - name: application.yml 파일 생성
+        run: |
+          if [ "${BRANCH_NAME}" = "main" ]; then
+            touch ./src/main/resources/application-prod.yml
+            echo "${{ secrets.APPLICATION_PROD }}" > ./src/main/resources/application-prod.yml
+          else
+            touch ./src/main/resources/application-dev.yml
+            echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application-dev.yml
+          fi
 
       - name: gradlew 파일에 실행 권한 부여
         run: chmod +x gradlew
@@ -49,36 +57,41 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: 정적 리소스를 S3 버킷으로 업로드
-        run: aws s3 sync ./src/main/resources/static s3://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}
-#        AWS_S3_BUCKET_NAME_PROD
+        run: |
+          if [ "${BRANCH_NAME}" = "main" ]; then
+            aws s3 sync ./src/main/resources/static s3://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}
+          else
+            aws s3 sync ./src/main/resources/static s3://${{ secrets.AWS_S3_BUCKET_NAME_DEV }}
+          fi
 
       - name: 템플릿 파일을 S3 버킷으로 업로드
-        run: aws s3 sync ./src/main/resources/templates s3://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}
-#        AWS_S3_BUCKET_NAME_PROD
-
-#      - name: 템플릿 파일을 S3 버킷으로 업로드
-#        run: aws s3 sync ./src/main/resources/templates s3://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}
+        run: |
+          if [ "${BRANCH_NAME}" = "main" ]; then
+            aws s3 sync ./src/main/resources/templates s3://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}
+          else
+            aws s3 sync ./src/main/resources/templates s3://${{ secrets.AWS_S3_BUCKET_NAME_DEV }}
+          fi
 
       - name: CloudFront 캐시 무효화
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CDN_DISTRIBUTION_ID }} --paths "/*"
 
-#      - name: 애플리케이션 JAR 파일 압축
-#        run: zip -r ./ ./build/libs/demo-0.0.1-SNAPSHOT.jar
       - name: zip으로 압축
         run: zip -r ./demo.zip .
         shell: bash
 
       - name: 압축 파일을 S3 버킷으로 업로드
-        run: aws s3 cp ./demo.zip s3://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}/build/demo.zip
-#
-#      - name: 압축 파일을 S3 버킷으로 업로드
-#        run: aws s3 cp ./ s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
-
-#      - name: jar 파일을 zip으로 압축하고 S3 버킷으로 업로드
-#        run: |
-#          zip demo.zip ./build/libs/demo-0.0.1-SNAPSHOT.jar
-#          aws s3 cp demo.zip s3://${{ secrets.S3_BUCKET_NAME }}/build/demo.zip
+        run: |
+          if [ "${BRANCH_NAME}" = "main" ]; then
+            aws s3 cp ./demo.zip s3://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}/build/demo.zip
+          else
+            aws s3 cp ./demo.zip s3://${{ secrets.AWS_S3_BUCKET_NAME_DEV }}/build/demo.zip
+          fi
 
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_NAME_PROD }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP_PROD }} --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME_PROD }},bundleType=zip,key=build/demo.zip --region ${{ secrets.AWS_REGION }}
+        run: |
+          if [ "${BRANCH_NAME}" = "main" ]; then
+            aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_NAME_PROD }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP_PROD }} --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME_PROD }},bundleType=zip,key=build/demo.zip --region ${{ secrets.AWS_REGION }}
+          else
+            aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_NAME_DEV }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP_DEV }} --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME_DEV }},bundleType=zip,key=build/demo.zip --region ${{ secrets.AWS_REGION }}
+          fi
 
