@@ -31,6 +31,8 @@ jobs:
             touch ./appspec.yml
             echo "${{ secrets.APPSPEC_DEV }}" > ./appspec.yml
           fi
+          echo "appspec.yml 파일 내용:"
+          cat ./appspec.yml
 
       - name: application.yml 파일 생성
         run: |
