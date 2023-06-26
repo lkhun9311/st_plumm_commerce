@@ -24,8 +24,8 @@ public class ProductDevService {
 
     public ResponseDto<?> readDevProducts() {
         List<Product> product = productRepository.findAll();
-        return ResponseDto.success(product);
-//        return ResponseDto.success(null);
+//        return ResponseDto.success(product);
+        return ResponseDto.success(null);
     }
 
     @Transactional
