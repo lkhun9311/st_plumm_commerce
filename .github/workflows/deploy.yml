@@ -95,6 +95,10 @@ jobs:
           else
             aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_NAME_DEV }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP_DEV }} --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME_DEV }},bundleType=zip,key=build/demo.zip --region ${{ secrets.AWS_REGION }}
           fi
+        environment:
+          name: deployment
+          url: https://${{ secrets.AWS_S3_BUCKET_NAME_PROD }}/build/demo.zip
+          # 이 작업은 'PROD' 환경에서 실행되며, 워크플로우가 이 단계에 도달하면 수동 승인이 필요합니다.
 
       - name: CloudFront 캐시 무효화
         run: |
