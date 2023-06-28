@@ -26,3 +26,16 @@ nohup java -Dspring.profiles.active=dev -jar $BUILD_JAR >> $LOG_FILE 2>&1 &
 
 # 로그 파일 위치 출력
 echo ">>> 로그 파일 위치: $LOG_FILE" >> /home/ec2-user/action/deploy.log
+
+# AWS CLI 를 사용하여 인스턴스를 비활성화
+AWS_REGION="ap-northeast-2"
+ELB_NAME="albdev.lkhun.store"
+
+# 로드밸런서에서 모든 인스턴스의 상태 확인
+INSTANCE_IDS=$(aws elb describe-instance-health --region $AWS_REGION --load-balancer-name $ELB_NAME --query 'InstanceStates[*].InstanceId' --output text)
+
+# 각 인스턴스를 차례대로 비활성화
+for INSTANCE_ID in $INSTANCE_IDS
+do
+  aws elb deregister-instances-from-load-balancer --region $AWS_REGION --load-balancer-name $ELB_NAME --instances $INSTANCE_ID
+done
